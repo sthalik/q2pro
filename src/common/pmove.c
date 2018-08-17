@@ -975,11 +975,12 @@ On exit, the origin will have a value that is pre-quantized to the 0.125
 precision of the network channel and in a valid position.
 ================
 */
+#if 1
 static void PM_SnapPosition(void)
 {
     int     sign[3];
     int     i, j, bits;
-    short   base[3];
+    int32_t base[3];
     // try all single bits first
     static const byte jitterbits[8] = {0, 4, 1, 2, 3, 5, 6, 7};
 
@@ -1014,12 +1015,13 @@ static void PM_SnapPosition(void)
     VectorCopy(pml.previous_origin, pm->s.origin);
 }
 
-#if 0
+#else
+#   define PM_HackedSnapPosition PM_SnapPosition
 void PM_HackedSnapPosition(void)
 {
     int        x, y, z;
-    short      base[3];
-    static const int offset[3] = { 0, -1, 1 };
+    int32_t    base[3];
+    static const int32_t offset[3] = { 0, -1, 1 };
     int i;
 
     // snap velocity to eigths
@@ -1063,8 +1065,8 @@ PM_InitialSnapPosition
 static void PM_InitialSnapPosition(void)
 {
     int        x, y, z;
-    short      base[3];
-    static const short offset[3] = { 0, -1, 1 };
+    int32_t    base[3];
+    static const int32_t offset[3] = { 0, -1, 1 };
 
     VectorCopy(pm->s.origin, base);
 

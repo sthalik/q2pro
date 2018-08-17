@@ -16,8 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifndef SHARED_H
-#define SHARED_H
+#pragma once
 
 //
 // shared.h -- included first by ALL program modules
@@ -49,6 +48,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 typedef unsigned char byte;
 typedef int qhandle_t;
+
+typedef int32_t q_position;
 
 #ifndef NULL
 #define NULL ((void *)0)
@@ -779,7 +780,7 @@ typedef enum {
 typedef struct {
     pmtype_t    pm_type;
 
-    short       origin[3];      // 12.3
+    q_position  origin[3];      // 12.3
     short       velocity[3];    // 12.3
     byte        pm_flags;       // ducked, jump_held, etc
     byte        pm_time;        // each unit = 8 ms
@@ -1499,4 +1500,3 @@ typedef struct {
     short       stats[MAX_STATS];       // fast status bar updates
 } player_state_t;
 
-#endif // SHARED_H

@@ -20,6 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define GAME_H
 
 #include "shared/list.h"
+#include "shared/shared.h"
 
 //
 // game.h -- game dll information visible to server
@@ -182,6 +183,8 @@ typedef struct {
     void (*AddCommandString)(const char *text);
 
     void (*DebugGraph)(float value, int color);
+
+    void (*WritePosInt)(q_position pos);
 } game_import_t;
 
 //

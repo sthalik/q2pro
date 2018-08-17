@@ -24,9 +24,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 typedef struct {
     uint16_t    number;
-    int16_t     origin[3];
+    q_position  origin[3];
     int16_t     angles[3];
-    int16_t     old_origin[3];
+    q_position  old_origin[3];
     uint8_t     modelindex;
     uint8_t     modelindex2;
     uint8_t     modelindex3;
@@ -130,8 +130,8 @@ int     MSG_ReadWord(void);
 int     MSG_ReadLong(void);
 size_t  MSG_ReadString(char *dest, size_t size);
 size_t  MSG_ReadStringLine(char *dest, size_t size);
-#if USE_CLIENT
 void    MSG_ReadPos(vec3_t pos);
+#if USE_CLIENT
 void    MSG_ReadDir(vec3_t vector);
 #endif
 int     MSG_ReadBits(int bits);
@@ -162,6 +162,8 @@ const char *MSG_ServerCommandString(int cmd);
 #endif // USE_CLIENT || USE_MVD_CLIENT
 #endif // _DEBUG
 
+void        MSG_WritePosInt(q_position pos);
+q_position  MSG_ReadPosInt(void);
 
 //============================================================================
 

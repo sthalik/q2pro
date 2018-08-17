@@ -898,6 +898,7 @@ void SV_InitGameProgs(void)
     import.WriteLong = MSG_WriteLong;
     import.WriteFloat = PF_WriteFloat;
     import.WriteString = MSG_WriteString;
+    import.WritePosInt = MSG_WritePosInt;
     import.WritePosition = MSG_WritePos;
     import.WriteDir = MSG_WriteDir;
     import.WriteAngle = MSG_WriteAngle;
