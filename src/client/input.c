@@ -453,6 +453,7 @@ static float autosens_y;
 CL_MouseMove
 ================
 */
+
 static void CL_MouseMove(void)
 {
     int dx, dy;
@@ -469,20 +470,61 @@ static void CL_MouseMove(void)
         return;
     }
 
-    if (m_filter->integer) {
-        mx = (dx + input.old_dx) * 0.5f;
-        my = (dy + input.old_dy) * 0.5f;
-    } else {
+    if (q_likely(m_filter->integer == 0)) {
         mx = dx;
         my = dy;
+    } else if (m_filter->integer == 1) {
+        mx = (dx + input.old_dx) * .5f;
+        my = (dy + input.old_dy) * .5f;
+    } else {
+        // simple EWMA IIR filter for bad mice or shaky hands
+        static float old_dx, old_dy;
+        static unsigned last_ms = 0;
+
+        unsigned ms = Sys_Milliseconds();
+        unsigned dt = ms - last_ms;
+        last_ms = ms;
+
+        // it works badly unless low delta but assume vsync to 60 Hz
+        if (dt < 22) {
+            // 45 Hz is 22.223
+            float RC = Cvar_ClampValue(m_filter, 2, 50);
+            float bias = .5f;
+            float alpha = (dt + bias)/(dt + RC);
+
+            mx = dx*alpha + old_dx*(1-alpha);
+            my = dy*alpha + old_dy*(1-alpha);
+
+            old_dx = mx, old_dy = my;
+
+#if _DEBUG
+            if (q_unlikely(developer->integer > 1))
+            {
+                static long double diff, total;
+                static unsigned ms_spent, nsamples;
+
+                ms_spent += dt; nsamples++;
+
+                double x = mx - dx, y = my - dy;
+                diff += sqrtl(x*x + y*y);
+                total += sqrtl(dx*dx + dy*dy);
+
+                if (ms_spent >= 1000 * 2 && nsamples > 0)
+                {
+                    Com_DDPrintf("m_filter diff:%f, total:%f\n",
+                                 (double)(diff/nsamples),
+                                 (double)(total/nsamples));
+
+                    diff = 0, total = 0, ms_spent = 0, nsamples = 0;
+                }
+            }
+#endif
+        } else
+            mx = dx, my = dy, old_dx = 0, old_dy = 0;
     }
 
     input.old_dx = dx;
     input.old_dy = dy;
-
-    if (!mx && !my) {
-        return;
-    }
 
     Cvar_ClampValue(m_accel, 0, 1);
 
