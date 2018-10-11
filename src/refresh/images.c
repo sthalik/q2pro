@@ -723,8 +723,9 @@ static int my_jpeg_start_decompress(j_decompress_ptr cinfo, byte *rawdata, size_
     return 0;
 }
 
-static int my_jpeg_finish_decompress(j_decompress_ptr cinfo, JSAMPROW row_pointer, byte *out)
+static int my_jpeg_finish_decompress(j_decompress_ptr cinfo, JSAMPROW row_pointer, byte *out_)
 {
+    byte * volatile out = out_;
     my_error_ptr jerr = (my_error_ptr)cinfo->err;
     JSAMPROW in;
     int i;
